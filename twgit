@@ -6,11 +6,11 @@
 # git clone git@git.twenga.com:aa/twgit.git [path]
 # cd [path]
 # Install: sudo make install --always-make
-# ou /bin/bash [path]/twgit
+# or /bin/bash [path]/twgit
 #
-# Sur le modèle de http://github.com/nvie/gitflow
+# Inspired by : http://github.com/nvie/gitflow
 
-# Dans ~/.bash_profile :
+# Inside ~/.bash_profile :
 # function get_git_branch {
 #         local branch=$(git branch --no-color 2>/dev/null | grep -P '^\*' | sed 's/* //')
 #         if [ ! -z "$branch" ]; then
@@ -18,7 +18,7 @@
 #                 [ `git status --porcelain --ignore-submodules=all | wc -l` -ne 0 ] && echo '*'
 #         fi
 # }
-# Puis :
+# Then :
 #    export PROMPT_COMMAND='PS1="\[\e[0;32m\]\h:\w$(get_git_branch)\[\e[1;32m\]\\$\[\e[m\] "'
 #
 #
@@ -90,7 +90,7 @@ TWGIT_FEATURES_SUBJECT_PATH="$TWGIT_USER_REPOSITORY_ROOT_DIR/$TWGIT_FEATURES_SUB
 
 
 ##
-# Duplication des flux à des fins d'historisation
+# Duplicate of flows in order to log
 #
 log_date="$(date "+%Y-%m-%d %H:%M:%S")"
 log_call="$0 $@"
@@ -117,7 +117,7 @@ trap "rm -f $PIPE_LOG $PIPE_ERROR" EXIT ERR
 
 
 ##
-# Affiche l'aide
+# Display help
 #
 # @tested_by TwgitHelpTest
 #
@@ -165,7 +165,7 @@ function usage () {
 }
 
 ##
-# Action déclenchant l'affichage de l'aide.
+# Action triggering the display of help
 #
 # @tested_by TwgitHelpTest
 #
@@ -174,11 +174,11 @@ function cmd_help () {
 }
 
 ##
-# Appelle l'action demandée ("cmd_$2") sur la commande spécifiée ($1).
-# Les paramètres surnumérères sont passés à la commande.
+# Call the asked action ("cmd_$2") on the specified command ($1).
+# All next params are given to the action.
 #
-# @param string $1 commande demandée
-# @param string $2 nom de l'action demandée, 'help' par défaut
+# @param string $1 asked command
+# @param string $2 name of the asked action, 'help' by default
 #
 function main () {
     # load command:
