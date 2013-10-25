@@ -44,35 +44,35 @@
 #--------------------------------------------------------------------
 
 ##
-# Affiche les $1 derniers hotfixes (nom complet), à raison d'un par ligne.
+# Display the $1 lasts hotfix (full name), one by row.
 #
-# @param int $1 nombre des derniers hotfixes à afficher
+# @param int $1 number of lasts hotfixs to display
 #
 function get_last_hotfixes () {
     git branch --no-color -r | grep $TWGIT_ORIGIN/$TWGIT_PREFIX_HOTFIX | sed 's/^[* ] //' | sort -n | tail -n $1
 }
 
 ##
-# Affiche les branches locales (nom complet), à raison d'une par ligne.
+# Display local branches (full name), one by row.
 #
 function get_local_branches () {
     git branch --no-color | sed 's/^[* ] //'
 }
 
 ##
-# Affiche la liste locale des branches distantes (nom complet), à raison d'une par ligne.
+# Display local list of remote branches (full name), one by row.
 #
 function get_remote_branches () {
     git branch --no-color -r | sed 's/^[* ] //'
 }
 
 ##
-# Affiche la liste des branches distantes qui ne sont pas catégorisables dans le process.
+# Display list of remote branch out of process.
 #
 # @testedby TwgitCommonGettersTest
 #
 function get_dissident_remote_branches () {
-    # génère une chaîne du genre : ' -e "^second/" -e "^third/"'
+    # render a string like : ' -e "^second/" -e "^third/"'
     local cmd="$(git remote | grep -v "^$TWGIT_ORIGIN$" | sed -e 's/^/ -e "^/' -e 's/$/\/"/' | tr '\n' ' ')"
 
     [ -z "$cmd" ] && cmd='tee /dev/null' || cmd="grep -v $cmd"
@@ -90,7 +90,7 @@ function get_dissident_remote_branches () {
 }
 
 ##
-# Affiche le nom complet des releases distantes (avec "$TWGIT_ORIGIN/") non encore mergées à $TWGIT_ORIGIN/$TWGIT_STABLE, à raison d'une par ligne.
+# Display the full name of remote releases (with "$TWGIT_ORIGIN/") not yet merged in $TWGIT_ORIGIN/$TWGIT_STABLE, one by row.
 #
 function get_releases_in_progress () {
     git branch --no-color -r --no-merged $TWGIT_ORIGIN/$TWGIT_STABLE \
@@ -98,7 +98,7 @@ function get_releases_in_progress () {
 }
 
 ##
-# Affiche le nom complet des releases non encore mergées à $TWGIT_ORIGIN/$TWGIT_STABLE, à raison d'une par ligne.
+# Display full name of remote hotfixes not yet merged in $TWGIT_ORIGIN/$TWGIT_STABLE, one by row.
 #
 function get_hotfixes_in_progress () {
     git branch --no-color -r --no-merged $TWGIT_ORIGIN/$TWGIT_STABLE \
@@ -106,9 +106,9 @@ function get_hotfixes_in_progress () {
 }
 
 ##
-# Affiche la release distante courante (nom complet sans "$TWGIT_ORIGIN/"),
-# c.-à-d. celle normalement unique à ne pas avoir été encore mergée à $TWGIT_ORIGIN/$TWGIT_STABLE.
-# Chaîne vide sinon.
+# Display the current remote release (full name without "$TWGIT_ORIGIN/"),
+# ie. normaly the only one not yet merged in $TWGIT_ORIGIN/$TWGIT_STABLE.
+# Will return an empty string if none found.
 #
 function get_current_release_in_progress () {
     local releases="$(get_releases_in_progress)"
@@ -118,11 +118,11 @@ function get_current_release_in_progress () {
 }
 
 ##
-# Calcule la liste locale des features distantes (nom complet avec "$TWGIT_ORIGIN/") mergées à la release distante $1,
-# sur une seule ligne séparées par des espaces,
-# et enregistre le résultat dans la globale GET_MERGED_FEATURES_RETURN_VALUE afin d'éviter les subshells.
+# Render the local list of all remote features (full name with "$TWGIT_ORIGIN/") merged in remote release $1,
+# on a single line, separated by spaces,
+# and record the result in the global GET_MERGED_FEATURES_RETURN_VALUE in order to avoid subshells.
 #
-# @param string $1 nom complet d'une release distante, sans "$TWGIT_ORIGIN/"
+# @param string $1 full name of a remote release, without the "$TWGIT_ORIGIN/"
 # @testedby TwgitFeatureClassificationTest
 #
 function get_merged_features () {
@@ -141,23 +141,23 @@ function get_merged_features () {
 }
 
 ##
-# Tableau associatif de mise en cache des appels à git rev-parse.
+# Indexed array of cached calls to git rev-parse.
 #
-# @var array tableau associatif
+# @var array indexed array
 # @see get_git_rev_parse()
 #
 declare -A REV_PARSE
 
 ##
-# Calcule si non déjà fait le git rev-parse de la branche spécifiée
-# et met en cache le résultat dans la globale REV_PARSE.
+# If the git rev-parse has not already done, it will put the result of the call
+# in the global var REV_PARSE.
 #
 # Ex. :
 #     branch='feature-123'
 #     get_git_rev_parse "$branch"
 #     rev="${REV_PARSE[$branch]}"
 #
-# @param string $1 nom complet d'une branche
+# @param string $1 full name of a branch
 # @see REV_PARSE
 # @testedby TwgitFeatureClassificationTest
 #
@@ -169,18 +169,18 @@ function get_git_rev_parse () {
 }
 
 ##
-# Tableau associatif de mise en cache des appels à git merge-base.
+# Indexed array of cached calls to git merge-base.
 #
-# @var array tableau associatif
+# @var array indexed array
 # @see get_git_merge_base()
 #
 declare -A MERGE_BASE
 
 ##
-# Calcule si non déjà fait le git merge-base des 2 références (SHA1) spécifiées
-# et met en cache le résultat dans la globale MERGE_BASE.
+# If the git-merge of 2 references (SHA1) specified was not alreay done, it
+# will put the result in the global var MERGE_BASE.
 #
-# La clé de cache est "$1|$2".
+# The indexed key is "$1|$2".
 #
 # Ex. :
 #     rev1='fafc000ac57ef285f7de7326c6cf8859ffd36996'
@@ -188,8 +188,8 @@ declare -A MERGE_BASE
 #     get_git_merge_base "$rev1" "$rev2"
 #     result="${MERGE_BASE[$rev1|$rev2]}"
 #
-# @param string $1 référence (SHA1) git
-# @param string $2 référence (SHA1) git
+# @param string $1 reference (SHA1) git
+# @param string $2 reference (SHA1) git
 # @param string $3 si 1 alors considérer tous les merge-base potentiels et ne garder que le premier
 #     de ceux appartenant aux first-parents (la branche source) de $2
 #     cf. TwgitFeatureClassificationTest::testGetFeatures_WithLastTagMergedIntoFeature()
