@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 ##
-# Gestionnaire des paramètres et options (avec le tiret simple) des fonctions.
+# Function parameters and options (with single dash) manager.
 #
-# Les options (une lettre max) peuvent être mélangées aux paramètres.
-# Syntaxe admises :
-#     - 6 options dans cet exemple, les X sont des paramètres standards facultatifs :
+# Options (one letter max) can be mixed with parameters.
+# Syntax allowed :
+#     - 6 options in this example, Xs are optionals standarts parameters :
 #     [X] -a [X] -b-c [X] -def [X]
 #
 # Usage :
@@ -38,25 +38,26 @@
 
 
 
-# Globales du système de gestion :
-FCT_OPTIONS=''		# concaténation des options sans les tirets, avec des espaces entre.
-FCT_PARAMETERS=''	# concaténation des paramètres non options, avec des espaces entre.
-RETVAL=''			# global to avoid subshell...
+# Globals of manager system :
+FCT_OPTIONS=''		# concatenation of options without dash separated by spaces.
+FCT_PARAMETERS=''	# concatenation of parameters (no option) separated by spaces.
+RETVAL=''		# global to avoid subshell...
 
 ##
-# Analayse les paramètres et les répartis entre options et paramètres standards.
-# Les options sont précédées du préfixe '-' ou d'une option.
-# Rempli les tableaux globaux $FCT_OPTIONS et $FCT_PARAMETERS.
-#
-# @param string $@ liste de paramètres à analyser
+# Analyse parameters and dispatch them between options and standart parameters.
+# Options are preceded by the prefix '-' or by an option.
+# Fill global arrays $FCT_OPTIONS and $FCT_PARAMETERS. 
+# 
+# @param string $@ list of parameters to analyze
 # @testedby TwgitOptionsHandlerTest
 #
 function process_options {
     local param
     while [ $# -gt 0 ]; do
-        # PB pour récupérer la lettre option quand echo "-n"...
+        # PB to retrieve the option letter when echo "-n"...
+        # This example does not works has awaited : param=`echo "$1" | grep -P '^-[^-]' | sed s/-//g`
         # Du coup ceci ne fonctionne pas : param=`echo "$1" | grep -P '^-[^-]' | sed s/-//g`
-        # Parade :
+        # Other solution :
         [ ${#1} -gt 1 ] && [ ${1:0:1} = '-' ] && [ ${1:1:1} != '-' ] && param="${1:1}" || param=''
 
         param=$(echo "$param" | sed s/-//g)
@@ -71,10 +72,10 @@ function process_options {
 }
 
 ##
-# Est-ce que la valeur spécifiée fait partie de $FCT_OPTIONS ?
-#
-# @param string $1 valeur à rechercher, sans le préfixe '-'
-# @return 0 si présent, 1 sinon
+# Is given value part of $FCT_OPTIONS ?
+# 
+# @param string $1 value to look for, without prefix '-'
+# @return 0 if found, 1 otherwise
 # @testedby TwgitOptionsHandlerTest
 #
 function isset_option () {
@@ -83,9 +84,9 @@ function isset_option () {
 }
 
 ##
-# Ajoute les options spécifiées à $FCT_OPTIONS pour les considérer actives.
+# Add given options to $FCT_OPTIONS in order to consider them as actives.
 #
-# @param string $1 options à ajouter, sans le préfixe '-'
+# @param string $1 options to add, without prefix '-'
 # @testedby TwgitOptionsHandlerTest
 #
 function set_options () {
@@ -96,18 +97,18 @@ function set_options () {
 }
 
 ##
-# Dépile le prochain paramètre de $FCT_PARAMETERS et le stock dans la globale $RETVAL.
+# Pops the next parameters of $FCT_PARAMETERS and add it to $RETVAL global variable.
 #
-# @param string $1 nom du paramètre demandé, qui servira pour le message d'erreur en cas de paramètre absent
-# Si le nom vaut '-' alors le paramètre est considéré comme optionnel.
+# @param string $1 name of the parameters wanted, which will be used for error message in cas of it was not found
+# If name is '-' then parameter is considered as optional.
 #
 function require_parameter () {
     local name=$1
 
-    # On extrait le pâté de paramètres le plus à gauche :
+    # Extract the lot of parameters at the most left :
     local param="${FCT_PARAMETERS%% *}"
 
-    # On met à jour les paramètres restant à traiter :
+    # Updating of parameters still to be parsed :
     FCT_PARAMETERS="${FCT_PARAMETERS:$((${#param}+1))}"
 
     if [ ! -z "$param" ]; then
