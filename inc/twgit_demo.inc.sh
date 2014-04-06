@@ -27,7 +27,7 @@
 
 
 ##
-# Affiche l'aide de la commande demo.
+# Display help for demo action.
 #
 function usage () {
     echo; CUI_displayMsg help 'Usage:'
@@ -59,17 +59,17 @@ function usage () {
 }
 
 ##
-# Action déclenchant l'affichage de l'aide.
+# Action triggering the display of help.
 #
 function cmd_help () {
     usage;
 }
 
 ##
-# Liste les branches de demo.
-# Détaille les features incluses dans chaque branche demo.
-# Gère l'option '-F' permettant d'éviter le fetch.
-# Gère l'option '-c' compactant l'affichage en masquant les détails de commit auteur et date.
+# List branches of demo.
+# Details features included in every demo branches.
+# Manage the option '-F' allowing to avoid the fetch.
+# Manage the option '-c' compacting the display by hiding commit details of authors and dates.
 #
 function cmd_list () {
     process_options "$@"
@@ -107,7 +107,7 @@ function cmd_list () {
 }
 
 ##
-# Push de la demo courante.
+# Push of current demo.
 #
 function cmd_push () {
     local current_branch=$(get_current_branch)
@@ -120,10 +120,10 @@ function cmd_push () {
 }
 
 ##
-# Crée une nouvelle demo à partir du dernier tag.
-# Gère l'option '-d' supprimant préalablement la demo locale, afin de forcer le recréation de la branche.
+# Create an new demo starting from last tag.
+# Manage the option '-d' deleting existing local demo, in order to force a new creation of branch.
 #
-# @param string $1 nom court de la nouvelle demo.
+# @param string $1 shortname of the new demo.
 #
 function cmd_start () {
     process_options "$@"
@@ -135,9 +135,9 @@ function cmd_start () {
 }
 
 ##
-# Suppression de la démo spécifiée.
+# Deleting of specific demo.
 #
-# @param string $1 nom court de la démo à supprimer
+# @param string $1 shortname of demo to delete.
 #
 function cmd_remove () {
     process_options "$@"
@@ -160,7 +160,7 @@ function cmd_merge-feature () {
     local feature="$RETVAL"
     local feature_fullname="$TWGIT_PREFIX_FEATURE$feature"
 
-    # Tests préliminaires :
+    # Preliminary tests :
     assert_clean_working_tree
     process_fetch
 
@@ -190,7 +190,7 @@ function cmd_status() {
     local demo="$RETVAL"
     local current_branch=$(get_current_branch)
 
-    # Si demo non spécifiée, récupérer la courante :
+    # If demo is not specified, we retrieve current one :
     local demo_fullname
     if [ -z "$demo" ]; then
         local all_demos=$(git branch -r | grep "$TWGIT_ORIGIN/$TWGIT_PREFIX_DEMO" | sed 's/^[* ]*//' | tr '\n' ' ' | sed 's/ *$//g')
